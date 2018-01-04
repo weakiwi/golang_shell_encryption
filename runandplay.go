@@ -4,9 +4,9 @@ import (
     "fmt"
     "io"
     "os"
-    "github.com/Tiked/FileEncryption"
     "io/ioutil"
     "os/exec"
+    "time"
     "strings"
 )
 
@@ -20,12 +20,7 @@ func read3(path string)string{
 }
 
 func main() {
-    FileEncryption.InitializeBlock([]byte("a very very very very secret key"))
-    err, ShellStrings := FileEncryption.Decrypter(os.Args[1])
-    if err != nil {
-      panic(err.Error())
-    }
-    //subProcess := exec.Command("bash", "-c", ShellStrings, "111", strings.Join(os.Args[2:]," ")) //Just for testing, replace with your subProcess
+    subProcess := exec.Command("bash", os.Args[1], "111", strings.Join(os.Args[2:]," ")) //Just for testing, replace with your subProcess
 
     stdin, err := subProcess.StdinPipe()
     if err != nil {
@@ -40,8 +35,13 @@ func main() {
     if err = subProcess.Start(); err != nil { //Use start, not run
         fmt.Println("An error occured: ", err) //replace with logger, or anything you want
     }
-
-    io.WriteString(stdin, "4\n")
+    go func() {fmt.Println("start remove")
+    time.Sleep(5)
+    if err = os.Remove(os.Args[1]); err != nil { //Use start, not run
+        fmt.Println("An error occured: ", err) //replace with logger, or anything you want
+    }
+    fmt.Println("finish remove")}()
     subProcess.Wait()
+    io.WriteString(stdin, "4\n")
     fmt.Println("END") //for debug
 }
