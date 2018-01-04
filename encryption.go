@@ -1,14 +1,12 @@
 package main
 import (
     "github.com/Tiked/FileEncryption"
-    "flag"
+    "os"
 )
 
 func main() {
   FileEncryption.InitializeBlock([]byte("a very very very very secret key"))
-  encryption_file := flag.String("e", "/entrypoint.sh","file to encryption")
-  flag.Parse()
-  err := FileEncryption.Encrypter(*encryption_file)
+  err := FileEncryption.Encrypter(os.Args[1])
   if err != nil {
     panic(err.Error())
   }

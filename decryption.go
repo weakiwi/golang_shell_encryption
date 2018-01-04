@@ -24,7 +24,6 @@ func main() {
     if err != nil {
       panic(err.Error())
     }
-    fmt.Println(ShellStrings)
     subProcess := exec.Command("bash", "-c", ShellStrings) //Just for testing, replace with your subProcess
 
     stdin, err := subProcess.StdinPipe()
