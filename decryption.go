@@ -23,16 +23,11 @@ func main() {
     decryption_file := flag.String("e","/entrypoint.sh.enc","file path to decryption")
     flag.Parse()
     FileEncryption.InitializeBlock([]byte("a very very very very secret key"))
-    err := FileEncryption.Decrypter(*decryption_file)
+    err, ShellStrings := FileEncryption.Decrypter(*decryption_file)
     if err != nil {
       panic(err.Error())
     }
-    origData := read3(FileEncryption.FilenameDeobfuscator(*decryption_file))
-    err = os.Remove(FileEncryption.FilenameDeobfuscator(*decryption_file))
-    if err != nil {
-      panic(err.Error())
-    }
-    subProcess := exec.Command("bash", "-c", string(origData)) //Just for testing, replace with your subProcess
+    subProcess := exec.Command("bash", "-c", ShellStrings) //Just for testing, replace with your subProcess
 
     stdin, err := subProcess.StdinPipe()
     if err != nil {
@@ -51,5 +46,4 @@ func main() {
     io.WriteString(stdin, "4\n")
     subProcess.Wait()
     fmt.Println("END") //for debug
-    fmt.Println(string(origData))
 }
