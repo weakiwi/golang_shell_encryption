@@ -7,7 +7,6 @@ import (
     "github.com/Tiked/FileEncryption"
     "io/ioutil"
     "os/exec"
-    "flag"
 )
 
 func read3(path string)string{  
@@ -20,13 +19,12 @@ func read3(path string)string{
 }
 
 func main() {
-    decryption_file := flag.String("e","/entrypoint.sh.enc","file path to decryption")
-    flag.Parse()
     FileEncryption.InitializeBlock([]byte("a very very very very secret key"))
-    err, ShellStrings := FileEncryption.Decrypter(*decryption_file)
+    err, ShellStrings := FileEncryption.Decrypter(os.Args[1])
     if err != nil {
       panic(err.Error())
     }
+    fmt.Println(ShellStrings)
     subProcess := exec.Command("bash", "-c", ShellStrings) //Just for testing, replace with your subProcess
 
     stdin, err := subProcess.StdinPipe()
