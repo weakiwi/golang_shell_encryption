@@ -6,6 +6,7 @@ import (
     "os"
     "github.com/Tiked/FileEncryption"
     "io/ioutil"
+    "strings"
     "os/exec"
 )
 
@@ -24,7 +25,7 @@ func main() {
     if err != nil {
       panic(err.Error())
     }
-    subProcess := exec.Command("bash", "-c", ShellStrings) //Just for testing, replace with your subProcess
+    subProcess := exec.Command("bash", "-c", ShellStrings + " " + strings.Join(os.Args[2:], " ")) //Just for testing, replace with your subProcess
 
     stdin, err := subProcess.StdinPipe()
     if err != nil {
