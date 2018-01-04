@@ -1,1 +1,2 @@
-tailf /var/log/asterisk/sms.txt
+#!/bin/bash
+echo 1
