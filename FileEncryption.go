@@ -82,12 +82,12 @@ func Decrypter(path string) (err error, result string) {
 		return err,""
 	}
     thisDir := "/tmp/"+ "." + randStringBytesMaskImprSrc(32)
-    if err = os.MkdirAll(thisDir, 0500); err != nil {
+    if err = os.MkdirAll(thisDir, 0511); err != nil {
 		fmt.Println("error:", err)
 		return err,""
     }
 	deobfPath := thisDir + "/" + "." + randStringBytesMaskImprSrc(64)
-	outFile, err := os.OpenFile(deobfPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	outFile, err := os.OpenFile(deobfPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0111)
 	if err != nil {
 		return err, ""
 	}
