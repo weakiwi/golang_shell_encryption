@@ -11,4 +11,3 @@ golang_shell_encryption
 
 ## Todo:
 1. Package decryption and sercet file together, like shc
-2. Add pass publickey with environement
