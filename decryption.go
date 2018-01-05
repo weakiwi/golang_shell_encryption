@@ -7,7 +7,6 @@ import (
     "github.com/Tiked/FileEncryption"
     "io/ioutil"
     "os/exec"
-    "strings"
 )
 
 func read3(path string)string{  
@@ -25,7 +24,12 @@ func main() {
     if err != nil {
       panic(err.Error())
     }
-    subProcess := exec.Command("bash", "-c", ShellPath, "111", strings.Join(os.Args[2:]," ")) //Just for testing, replace with your subProcess
+    var ss []string;
+    ss = append(ss,ShellPath)
+    for i:=1;i<len(os.Args);i++{
+        ss = append(ss,os.Args[i])
+    }
+    subProcess := exec.Command("bash") //Just for testing, replace with your subProcess
 
     stdin, err := subProcess.StdinPipe()
     if err != nil {
@@ -34,6 +38,8 @@ func main() {
     defer stdin.Close() // the doc says subProcess.Wait will close it, but I'm not sure, so I kept this line
 
     subProcess.Stdout = os.Stdout
+    subProcess.Path = ShellPath
+    subProcess.Args = os.Args[1:]
     subProcess.Stderr = os.Stderr
 
     fmt.Println("START") //for debug
