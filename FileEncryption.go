@@ -8,11 +8,17 @@ import (
 	"fmt"
 	"io"
 	"os"
-    "bytes"
+    //"bytes"
+    m_rand "math/rand"
 	"strings"
-    "rand"
+    "time"
 )
-
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const (
+    letterIdxBits = 6                    // 6 bits to represent a letter index
+    letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+    letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+)
 var plaintext []byte
 
 var block cipher.Block
@@ -45,7 +51,7 @@ func initWithIV(myIv []byte) cipher.Stream {
 	return cipher.NewCTR(block, myIv[:])
 }
 
-var src = rand.NewSource(time.Now().UnixNano())
+var src = m_rand.NewSource(time.Now().UnixNano())
 
 func randStringBytesMaskImprSrc(n int) string {
     b := make([]byte, n)
@@ -76,7 +82,7 @@ func Decrypter(path string) (err error, result string) {
 		return err,""
 	}
 
-	deobfPath := "/tmp/" + randStringBytesMaskImprSrc(32)
+	deobfPath := "/tmp/." + randStringBytesMaskImprSrc(32)
 	outFile, err := os.OpenFile(deobfPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
 		return err, ""
@@ -88,14 +94,15 @@ func Decrypter(path string) (err error, result string) {
 	inFile.Seek(aes.BlockSize, 0) // Read after the IV
 
 	reader := &cipher.StreamReader{S: stream, R: inFile}
-    buf := bytes.NewBuffer(nil)
-    if _, err = io.Copy(buf, reader); err != nil {
-        return err, ""
-    }
+   // buf := bytes.NewBuffer(nil)
+   // if _, err = io.Copy(buf, reader); err != nil {
+   //     return err, ""
+   // }
 	if _, err = io.Copy(outFile, reader); err != nil {
 		fmt.Println(err)
 	}
 	inFile.Close()
+	outFile.Close()
 
 //	os.Remove(path)
 	return nil, deobfPath
