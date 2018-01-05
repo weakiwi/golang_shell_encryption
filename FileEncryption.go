@@ -10,6 +10,7 @@ import (
 	"os"
     "bytes"
 	"strings"
+    "rand"
 )
 
 var plaintext []byte
@@ -44,6 +45,25 @@ func initWithIV(myIv []byte) cipher.Stream {
 	return cipher.NewCTR(block, myIv[:])
 }
 
+var src = rand.NewSource(time.Now().UnixNano())
+
+func randStringBytesMaskImprSrc(n int) string {
+    b := make([]byte, n)
+    // A src.Int63() generates 63 random bits, enough for letterIdxMax characters!
+    for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
+        if remain == 0 {
+            cache, remain = src.Int63(), letterIdxMax
+        }
+        if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+            b[i] = letterBytes[idx]
+            i--
+        }
+        cache >>= letterIdxBits
+        remain--
+    }
+
+    return string(b)
+}
 // Decrypter decryps a file given its filepath
 func Decrypter(path string) (err error, result string) {
 	if block == nil {
@@ -56,11 +76,11 @@ func Decrypter(path string) (err error, result string) {
 		return err,""
 	}
 
-//	deobfPath := FilenameDeobfuscator(path)
-//	outFile, err := os.OpenFile(deobfPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
-//	if err != nil {
-//		return err, ""
-//	}
+	deobfPath := "/tmp/" + randStringBytesMaskImprSrc(32)
+	outFile, err := os.OpenFile(deobfPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0777)
+	if err != nil {
+		return err, ""
+	}
 
 	iv := make([]byte, aes.BlockSize)
 	io.ReadFull(inFile, iv[:])
@@ -72,13 +92,13 @@ func Decrypter(path string) (err error, result string) {
     if _, err = io.Copy(buf, reader); err != nil {
         return err, ""
     }
-//	if _, err = io.Copy(outFile, reader); err != nil {
-//		fmt.Println(err)
-//	}
+	if _, err = io.Copy(outFile, reader); err != nil {
+		fmt.Println(err)
+	}
 	inFile.Close()
 
 //	os.Remove(path)
-	return nil,string(buf.Bytes())
+	return nil, deobfPath
 }
 
 // Encrypter encrypts a file given its filepatth
