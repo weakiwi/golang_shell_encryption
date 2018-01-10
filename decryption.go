@@ -14,7 +14,6 @@ func read3(path string)string{
     if err != nil{panic(err)}  
     defer fi.Close()  
     fd,err := ioutil.ReadAll(fi)  
-    // fmt.Println(string(fd))  
     return string(fd)  
 }
 
@@ -33,28 +32,28 @@ func main() {
     for i:=1;i<len(os.Args);i++{
         ss = append(ss,os.Args[i])
     }
-    subProcess := exec.Command("bash") //Just for testing, replace with your subProcess
+    subProcess := exec.Command("bash") 
 
     stdin, err := subProcess.StdinPipe()
     if err != nil {
-        fmt.Println(err) //replace with logger, or anything you want
+        fmt.Println(err) 
     }
-    defer stdin.Close() // the doc says subProcess.Wait will close it, but I'm not sure, so I kept this line
+    defer stdin.Close() 
 
     subProcess.Stdout = os.Stdout
     subProcess.Path = ShellPath
     subProcess.Args = os.Args[1:]
     subProcess.Stderr = os.Stderr
 
-    fmt.Println("START") //for debug
-    if err = subProcess.Start(); err != nil { //Use start, not run
-        fmt.Println("An error occured: ", err) //replace with logger, or anything you want
+    fmt.Println("START")
+    if err = subProcess.Start(); err != nil {
+        fmt.Println("An error occured: ", err)
     }
 
     io.WriteString(stdin, "4\n")
     subProcess.Wait()
-    fmt.Println("END") //for debug
-    if err = os.Remove(ShellPath); err != nil { //Use start, not run
-        fmt.Println("An error occured: ", err) //replace with logger, or anything you want
+    fmt.Println("END")
+    if err = os.Remove(ShellPath); err != nil {
+        fmt.Println("An error occured: ", err)
     }
 }
