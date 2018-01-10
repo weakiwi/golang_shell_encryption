@@ -22,7 +22,7 @@ CMD ["rabbitmq-server"]
 1. encrypt /usr/local/bin/docker-entrypoint.sh.
 ```shell
 mykey=$(date +%s | sha256sum | base64 | head -c 32 ; echo)
-echo $myket
+echo $mykey
 export ENTRYPOINT_PUBLIC_KEY=$mykey
 ./encryption /home/rabbitmq/docker-entrypoint.sh
 ```
